@@ -3,7 +3,7 @@
   hosts: nodes
   become: false
   vars:
-    test_data: {"test": "data"}
+    test_data: {"test": "123"}
 
   tasks:
     - name: Generate config from template
