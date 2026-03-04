@@ -1,0 +1,47 @@
+---
+- name: Generate application configuration from template
+  template:
+    src: application-config.j2
+    dest: "{{ app_config_file }}"
+    mode: '0644'
+  notify:
+    - Restart Application
+  register: config_changed
+
+- name: Record timestamp if config changed
+  copy:
+    content: "Last updated: {{ ansible_date_time.iso8601 }}"
+    dest: "{{ app_config_file }}.last_updated"
+  when: config_changed.changed
+  changed_when: false
+
+- name: Check Application status
+  shell: |
+    if [ -f "{{ app_dir }}/run/application.pid" ]; then
+      pid=$(cat "{{ app_dir }}/run/application.pid")
+      if kill -0 "$pid" 2>/dev/null; then
+        echo 'running'
+      else
+        echo 'stopped'
+      fi
+    else
+      echo 'stopped'
+    fi
+  register: app_status
+  changed_when: false
+  ignore_errors: true
+
+- name: Start Application if not running
+  shell: "{{ app_bin }} start"
+  args:
+    executable: /bin/bash
+  when: app_status.stdout == 'stopped'
+  ignore_errors: true
+
+- name: Display application status
+  debug:
+    msg: 
+      - "Application binary exists: {{ app_binary.stat.exists }}"
+      - "Configuration updated: {{ config_changed.changed }}"
+      - "Application was started fresh: {{ app_status.stdout == 'stopped' }}"
+      - "Config file: {{ app_config_file }}"

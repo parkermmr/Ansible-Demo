@@ -1,0 +1,22 @@
+---
+- name: Use a Registration to Trigger an Event
+  hosts: nodes
+  become: false
+
+  tasks:
+    - name: Copy test-{{ node_id }}.json to node
+      copy:
+        src: files/test-{{ node_id }}.json
+        dest: "{{ app_dir }}/test-{{ node_id }}.json"
+        mode: '0644'
+      register: copy_result
+
+    - name: Display copy status
+      debug:
+        msg: 
+          - "File updated: {{ copy_result.changed }}"
+
+    - name: Trigger an Event
+      debug:
+        msg: "Event triggered for node {{ node_id }}!"
+      when: copy_result.changed

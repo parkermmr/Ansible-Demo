@@ -1,0 +1,16 @@
+---
+- name: Ensure application directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ app_config_dir }}"
+    - "{{ app_dir }}/bin"
+    - "{{ app_dir }}/logs"
+    - "{{ app_dir }}/run"
+
+- name: Check if application binary exists
+  stat:
+    path: "{{ app_bin }}"
+  register: app_binary

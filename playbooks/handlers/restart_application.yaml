@@ -1,0 +1,12 @@
+---
+- name: Restart Application
+  shell: |
+    # Kill any zombie/defunct instances first
+    pkill -x "application" 2>/dev/null || true
+    sleep 1
+    # Start fresh with nohup to properly detach
+    nohup {{ app_bin }} start > {{ app_dir }}/logs/application.log 2>&1 &
+    echo $! > {{ app_dir }}/run/application.pid
+  args:
+    executable: /bin/bash
+  ignore_errors: true

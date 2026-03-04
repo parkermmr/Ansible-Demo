@@ -1,0 +1,88 @@
+---
+- name: Complete Node Deployment
+  hosts: nodes
+  become: false
+  
+  handlers:
+    - name: Restart Application
+      shell: |
+        # Kill any zombie/defunct instances first
+        pkill -x "application" 2>/dev/null || true
+        sleep 1
+        # Start fresh with nohup to properly detach
+        nohup {{ app_bin }} start > {{ app_dir }}/logs/application.log 2>&1 &
+        echo $! > {{ app_dir }}/run/application.pid
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+
+  tasks:
+    - name: Ensure application directories exist
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ app_config_dir }}"
+        - "{{ app_dir }}/bin"
+        - "{{ app_dir }}/logs"
+        - "{{ app_dir }}/run"
+
+    - name: Check if application binary exists
+      stat:
+        path: "{{ app_bin }}"
+      register: app_binary
+
+    - name: Generate application configuration from template
+      template:
+        src: application-config.j2
+        dest: "{{ app_config_file }}"
+        mode: '0644'
+      notify:
+        - Restart Application
+      register: config_changed
+
+    - name: Record timestamp if config changed
+      copy:
+        content: "Last updated: {{ ansible_date_time.iso8601 }}"
+        dest: "{{ app_config_file }}.last_updated"
+      when: config_changed.changed
+      changed_when: false
+
+    - name: Check Application status
+      shell: |
+        if [ -f "{{ app_dir }}/run/application.pid" ]; then
+          pid=$(cat "{{ app_dir }}/run/application.pid")
+          if kill -0 "$pid" 2>/dev/null; then
+            echo 'running'
+          else
+            echo 'stopped'
+          fi
+        else
+          echo 'stopped'
+        fi
+      register: app_status
+      changed_when: false
+      ignore_errors: true
+
+    - name: Start Application if not running
+      shell: "{{ app_bin }} start"
+      args:
+        executable: /bin/bash
+      when: app_status.stdout == 'stopped'
+      ignore_errors: true
+
+    - name: Display application status
+      debug:
+        msg: 
+          - "Application binary exists: {{ app_binary.stat.exists }}"
+          - "Configuration updated: {{ config_changed.changed }}"
+          - "Application was started fresh: {{ app_status.stdout == 'stopped' }}"
+          - "Config file: {{ app_config_file }}"
+    
+    - name: Display deployment summary
+      debug:
+        msg:
+          - "Deployment completed for {{ inventory_hostname }}"
+          - "SSH: ssh -i ~/.ssh/ansible -p {{ ansible_port }} {{ ansible_user }}@{{ ansible_host }}"
+      tags: [always]

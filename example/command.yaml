@@ -1,0 +1,17 @@
+---
+- name: Run Command on Nodes
+  hosts: nodes
+  become: false
+
+  tasks:
+    - name: Run id
+      shell: |
+        id
+      args:
+        executable: /bin/bash
+      register: result
+      changed_when: false
+
+    - name: Display result
+      debug:
+        msg: "{{ result.stdout }}"

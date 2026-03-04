@@ -1,0 +1,14 @@
+---
+- name: Debug Playbook
+  hosts: nodes
+  become: false
+
+  tasks:
+    - name: Display debug information
+      debug:
+        msg:
+          - "Hostname: {{ inventory_hostname }}"
+          - "Host: {{ ansible_host }}"
+          - "Port: {{ ansible_port }}"
+          - "User: {{ ansible_user }}"
+          - "Node ID: {{ node_id }}"

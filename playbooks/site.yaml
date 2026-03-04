@@ -1,0 +1,25 @@
+---
+- name: Complete Node Deployment
+  hosts: nodes
+  become: false
+  
+  handlers:
+    - import_tasks: handlers/restart_application.yaml
+
+  tasks:
+    - name: Setup application runtime environment
+      import_tasks: tasks/setup.yaml
+      when: application_enabled | default(true)
+      tags: [application, setup]
+
+    - name: Deploy application
+      import_tasks: tasks/deploy.yaml
+      when: application_enabled | default(true)
+      tags: [application, deploy]
+
+    - name: Display deployment summary
+      debug:
+        msg:
+          - "Deployment completed for {{ inventory_hostname }}"
+          - "SSH: ssh -i ~/.ssh/ansible -p {{ ansible_port }} {{ ansible_user }}@{{ ansible_host }}"
+      tags: [always]

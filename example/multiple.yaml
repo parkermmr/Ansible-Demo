@@ -1,0 +1,11 @@
+---
+- name: Copy Seperate Files to Nodes
+  hosts: nodes
+  become: false
+
+  tasks:
+    - name: Copy test-{node-id}.json to node
+      copy:
+        src: files/test-{{ node_id }}.json
+        dest: "{{ app_dir }}/test-{{ node_id }}.json"
+        mode: '0644'

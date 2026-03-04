@@ -1,0 +1,15 @@
+---
+- name: Stop All Services on Nodes
+  hosts: nodes
+  become: false
+  
+  tasks:
+    - name: Stop all running services
+      shell: |
+        if pgrep -f "{{ app_bin }}" > /dev/null; then
+          {{ app_bin }} stop
+        else
+          echo "Application not running, skipping stoppage"
+        fi
+      args:
+        executable: /bin/bash

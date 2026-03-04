@@ -1,0 +1,13 @@
+---
+application_enabled: true
+app_user: somebody
+app_group: somebody
+
+# Path configuration
+app_home: "/home/{{ app_user }}"
+app_dir: "{{ app_home }}/application"
+app_bin: "{{ app_dir }}/bin/application"
+app_config_dir: "{{ app_dir }}/config"
+
+# Config file location
+app_config_file: "{{ app_config_dir }}/CONFIG_FILE"

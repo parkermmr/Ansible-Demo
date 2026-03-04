@@ -1,0 +1,42 @@
+# This is a special file, ansible looks for hosts.yaml in the inventory
+# to know exactly what hosts have been defined for a project.
+
+nodes:                            # This denotes the group name for a group of hosts.
+  hosts:                          # This is an ansible keyword that tells ansible that what follows is a dictionary host dictionaries where the key is the hostname i.e. host-1: {config}.
+    node-1:                       # This an entry in the hosts dictionary, where 'node-1' denotes the host name.
+      ansible_host: localhost     # This is a host variable that controls the host information for SSH. This can be a DNS, hostname, or IP.
+      ansible_user: somebody      # This is the user that ansible will use when executing its commands.
+      ansible_port: 2223          # This is the port ansible will use for SSH.
+      node_id: 1                  # This is ansible unique identifier to say to ansible that this host has this identity.
+    node-2:
+      ansible_host: localhost
+      ansible_user: somebody
+      ansible_port: 2224
+      node_id: 2
+    node-3:
+      ansible_host: localhost
+      ansible_user: somebody
+      ansible_port: 2225
+      node_id: 3
+
+# NOTE: You can denote subgroups using children. This is useful as you can apply specific variables to the top-level group, but then add additional variables to sub groups.
+#
+# all:                                # This is the top level group name
+#   children:                         # This is a ansible keyword that tells ansible that the items that follow are not hosts but are host groups.
+#     nodes:                          # This is the first host group within all, so the 'all' group has sub-groups which contain hosts.
+#       hosts:
+#         node-1:                      
+#           ansible_host: localhost     
+#           ansible_user: somebody      
+#           ansible_port: 2223         
+#           node_id: 1                  
+#         node-2:
+#           ansible_host: localhost
+#           ansible_user: somebody
+#           ansible_port: 2224
+#           node_id: 2
+#         node-3:
+#           ansible_host: localhost
+#           ansible_user: somebody
+#           ansible_port: 2225
+#           node_id: 3
