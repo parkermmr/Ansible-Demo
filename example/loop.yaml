@@ -1,0 +1,37 @@
+---
+- name: Loop Playbook
+  hosts: nodes
+  become: false
+  vars:
+    list: ['x', 'y', 'z']
+
+  tasks:
+    - name: Loop over a simple list
+      debug:
+        msg: "Item: {{ item }}"
+      loop:
+        - one
+        - two
+        - three
+
+    - name: Loop over a dict
+      debug:
+        msg: "{{ item.name }} is {{ item.age }}"
+      loop:
+        - { name: "Alice", age: 30 }
+        - { name: "Bob", age: 25 }
+
+    - name: Loop with index
+      debug:
+        msg: "{{ index }} - {{ item }}"
+      loop:
+        - a
+        - b
+        - c
+      loop_control:
+        index_var: index
+
+    - name: Loop over a variable
+      debug:
+        msg: "{{ item }}"
+      loop: "{{ list }}"

@@ -1,0 +1,9 @@
+---
+- name: Pause Playbook
+  hosts: nodes
+  become: false
+
+  tasks:
+    - name: Pause for 3 seconds
+      pause:
+        seconds: 3

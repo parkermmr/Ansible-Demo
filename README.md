@@ -22,4 +22,9 @@ ansible-playbook playbooks/examples/multiple.yaml
 ansible-playbook playbooks/examples/register.yaml
 ansible-playbook playbooks/examples/when.yaml
 ansible-playbook playbooks/examples/jinja.yaml
+ansible-playbook playbooks/examples/pause.yaml
+ansible-playbook playbooks/examples/confirm.yaml
+ansible-playbook playbooks/examples/uri.yaml
+ansible-playbook playbooks/examples/post.yaml
+ansible-playbook playbooks/examples/loop.yaml
 ```

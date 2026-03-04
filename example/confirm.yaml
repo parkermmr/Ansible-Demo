@@ -1,0 +1,24 @@
+---
+- name: Confirm Playbook
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Pause and wait for confirmation
+      pause:
+        prompt: "Type 'confirm' to continue"
+      register: user_input
+
+    - name: Abort if not confirmed
+      fail:
+        msg: "Aborted — you must type 'confirm' to continue"
+      when: user_input.user_input != 'confirm'
+
+- name: Continue on Nodes
+  hosts: nodes
+  become: false
+
+  tasks:
+    - name: Confirmed — proceeding on nodes
+      debug:
+        msg: "Confirmation received, continuing on {{ inventory_hostname }}"
