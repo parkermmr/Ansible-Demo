@@ -1,0 +1,13 @@
+---
+- name: Jinja Template Deploy
+  hosts: nodes
+  become: false
+  vars:
+    test_data: {"test": "data"}
+
+  tasks:
+    - name: Generate config from template
+      template:
+        src: files/config.j2
+        dest: "{{ app_dir }}/config/_jinija"
+        mode: '0644'

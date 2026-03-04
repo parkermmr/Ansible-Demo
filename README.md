@@ -21,4 +21,5 @@ ansible-playbook playbooks/examples/copy.yaml
 ansible-playbook playbooks/examples/multiple.yaml
 ansible-playbook playbooks/examples/register.yaml
 ansible-playbook playbooks/examples/when.yaml
+ansible-playbook playbooks/examples/jinja.yaml
 ```
